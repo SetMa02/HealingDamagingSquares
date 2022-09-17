@@ -4,14 +4,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class Enemy : MonoBehaviour
 {   
     [SerializeField] private float _maxHealth;
     private float _health;
+    private Rigidbody2D _rigidbody;
     
     private void Start()
     {
         _health = _maxHealth;
+        _rigidbody = GetComponent<Rigidbody2D>();
     }
     
     private void FixedUpdate()
@@ -24,17 +27,13 @@ public class Enemy : MonoBehaviour
     
     public void ChangeHealth(float value)
     {
-        _health = Math.Clamp(value, 0, _maxHealth);
+        _health = Math.Clamp(_health + value, 0, _maxHealth);
     }
 
-    public void Heal(float value)
+    public void AddForce(float force, Vector3 direction)
     {
-        ChangeHealth(value);
-    }
-
-    public void Damage(float value)
-    {
-        ChangeHealth(-value);
+        transform.position = Vector3.MoveTowards(transform.position, direction, 
+            force * Time.deltaTime);
     }
     
     private void Die()
